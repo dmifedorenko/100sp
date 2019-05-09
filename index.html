@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>100sp homework</title>
+
+    <link rel="stylesheet" href="./css/vendor/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <form
+                class="form-group"
+                id="collection-link"
+                method="post"
+                action="./api/index.php"
+                >
+                    <label for="collection-input">Коллекция</label>
+        
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="collection-input" placeholder="https://www.100sp.ru/collection/00000000 или 00000000">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="submit">Загрузить</button>
+                        </div>
+                    </div>
+                    <p>
+                        <small class="form-text text-muted">Вы можете указать ID коллекции либо указать ссылку на страницу.</small>
+                        <small class="form-text text-muted">Например: https://www.100sp.ru/collection/8433106 или 8433106</small>
+                    </p>
+                </form>
+            </div>
+           
+        </div>
+        
+        <div class="row" id="collection-table-wrapper" style="display: none;">
+            <div class="col-sm">
+                <button id="save-csv-btn" class="btn btn-outline-primary mb-1">Сохранить CSV</button>
+                <table class="table table-bordered" >
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">URL изображения</th>
+                        <th scope="col">Цена</th>
+                        <th scope="col">Описание</th>
+                    </tr>
+                    </thead>
+                    <tbody id="collection-table-body"></tbody>
+                </table>
+            </div>
+
+        </div>
+        
+    
+
+
+
+        <div class="row">
+            <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#buttoncollapse-tz" aria-expanded="false" aria-controls="Collapse">Задание</button>
+            
+            <div class="collapse" id="buttoncollapse-tz">
+                <div class="card card-block">
+                    <div class="col-lg-12">
+                        <p>Тестовое задание — импорт, обработка, экспорт данных из коллекции  </p>
+                        <p>Пишем мини-приложение на PHP 7, JS и jQuery, без использования объемных JS библиотек. Для PHP части можно использовать любой современный фреймворк, или можно подключить старый но актуальный для 100сп Yii. </p>
+                        <p>UI можно сделать на Bootstrap. Красиво, быстро и все умееют с ним работать. </p>
+                        <p>Приложение одностраничник, верстаем под десктоп без мобильника. На респонсив время не тратим. </p>
+                        <p>На входе у приложения делаем поле для добавления ссылки на страницу вида https://www.100sp.ru/collection/xxx (например, https://www.100sp.ru/collection/8419622) и кнопку сабмита. </p>
+                        <p>При отправке ссылки на бэкенде в PHP любым способом скачиваем HTML страницы на которую ссылается поле, сохраняем в файловой системе    исходник и в UI нашего приложения рисуем таблицу в данными товаров виде: <br>
+                            |Номер|Товар|Фото|Цена|Описание| </p>
+                        <p>Для отрисовки конечно надо будет как-то распарсить HTML и вынуть из него все необходимые данные. Это можно сделать как на стороне PHP через SimpleXML, например, так и через JS. </p>
+                        <p>В таблице позволяем делать inplace редактирование данных. Пользователь может изменить цену, например, или описание. При редактировании фото позволяем только указывать http ссылку на новое изображение, полноценную загрузку не делаем. </p>
+                        <p>После редактирования позволяем скачать данные из таблицы в виде csv файла. Файл должен открываться в Excel. </p>
+                        <p>И еще раз: в итоге я хотел бы увидеть страницу на которой можно редактировать данные отдельной коллекции и потом скачать их в формате который понимает Excel. Результат лучше всего выкладывать на github.com чтобы можно было бы делать ревью и комментировать код.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <button class="btn btn-light" type="button" data-toggle="collapse" data-target="#buttoncollapse-dop" aria-expanded="false" aria-controls="Collapse">Уточнения</button>
+            
+            <div class="collapse" id="buttoncollapse-dop">
+                <div class="card card-block">
+                    <div class="col-lg-12">
+                        <p>1. jQuery можно и нужно использовать. Я невнятно написал об этом в ТЗ, моя недоработка.</p>
+                        <p>2. CSV сохранять лучше через PHP, делайте POST запрос с данным на бэкенд, а он уже пусть в нужном формате данные отдает. Для PHP не нужны библиотеки чтобы CSV генерировать, он довольно легко это делает.</p>
+                        <p>3. Inplace хочу увидеть от вас самописный как раз для демонстрации знаний фронтенда. В приоритет здесь объемный, самописный JS код.</p>
+                        <p>4. "Бэк пишу без фреймворков и ООП” — без фреймворков ок, без ООП нельзя никак. Какой-то минимальный каркас классов накидайте пожалуйста, функциональный подход уже давно не в моде.</p>
+                        <p>5. "Как лучше поступить, когда доделаю фронт?” — я от ребят обычно прошу показывать минимально рабочий прототип как можно раньше. Так мы сможем убедится, что задача понята и исполняется верно. Можете ссылку на решение быстрее прислать но при этом оно должно работать, желательно без очевидных багов которые ломают весь функционал. На правильное экранирование кавычек и ; , например, в CSV сразу обратите внимание.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./js/vendor/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="./js/vendor/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="./js/vendor/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="./js/vendor/toast.min.js"></script>
+
+    <script src="./js/main.js"></script>
+
+</body>
+</html>

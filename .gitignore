@@ -1,0 +1,6 @@
+.idea/
+.idea_modules/
+downloaded-pages/*
+csv/*
+api/Config.php
+!/**/.gitkeep
