@@ -13,9 +13,8 @@ if ( ($_POST['type'] === 'collection-send') && ( ! empty ($_POST['value']) ) )  
 
     $cookies = $auth->setCookies(Config::AUTH_COOKIES["auth"], Config::AUTH_COOKIES["ring"], Config::AUTH_COOKIES["uid"]);
 
-    $collection = new Collection();
-    $collectionId = $collection->getCollectionId($_POST['value']);
-    $collectionArray = $collection->getCollection(Config::URL, $cookies, $collectionId);
+    $collection = new Collection($_POST['value']);
+    $collectionArray = $collection->getCollection(Config::URL, $cookies);
     echo json_encode($collectionArray);
 }
 

@@ -8,33 +8,21 @@
 
 class Collection
 {
-    private $collectionId = "";
-    private $collectionFile = "";
-    private $collectionPage = "";
-    private $collectionArray = array();
+    private $id = "";
+    private $file = "";
+    private $page = "";
+    private $array = array();
 
-    public function getCollectionId($str)
+    function __construct($str)
     {
-        if (filter_var($str, FILTER_VALIDATE_URL)) {
-            $path = parse_url($str, PHP_URL_PATH);
-            $this->collectionId = explode('/', $path)[2];
-        }
-        else {
-            // удаляем "100sp" из строки, на случай, если пользователь ввёл некорректный url, например www.100sp.ru/collection/8433106
-            $collectionStr = str_replace("100sp", "",$str);
-
-            // заменяем все символы на ничего, оставляем только цифры.
-            $this->collectionId = preg_replace('/[^0-9]/','', $collectionStr);
-        }
-
-        return $this->collectionId;
+        preg_match('~(\d+)$~', $str, $matches);
+        $this->id = (int)$matches[1];
     }
 
-    public function getCollection($url, $cookies, $collectionId)
+    public function getCollection($url, $cookies)
     {
-        $collectionId = $collectionId ? $collectionId : $this->collectionId;
-        if (! empty ($collectionId) ) {
-            $this->getCollectionPage($url, $cookies, $collectionId);
+        if ($this->id) {
+            $this->getCollectionPage($url, $cookies, $this->id);
             $this->saveCollectionToFile();
             return $this->parseCollectionFile();
         } else {
@@ -58,7 +46,7 @@ class Collection
             CURLOPT_POSTFIELDS => ""
         ));
 
-        $this->collectionPage = curl_exec($curl);
+        $this->page = curl_exec($curl);
         $err = curl_error($curl);
         curl_close($curl);
 
@@ -66,29 +54,31 @@ class Collection
             error_log("curl_error: ". $err, 0);
             return $err;
         } else {
-            return $this->collectionPage;
+            return $this->page;
         }
     }
 
     private function saveCollectionToFile()
     {
-        $this->collectionFile = $_SERVER['DOCUMENT_ROOT'] . '/downloaded-pages/page_' . $this->collectionId . ".html";
-        $fp = fopen($this->collectionFile, 'w');
-        fwrite($fp, $this->collectionPage);
+        $this->file = $_SERVER['DOCUMENT_ROOT'] . '/downloaded-pages/page_' . $this->file . ".html";
+        $fp = fopen($this->file, 'w');
+        fwrite($fp, $this->page);
         fclose($fp);
     }
 
     private function parseCollectionFile($successSelector = '.collection-header', $closedCollectionSelector = '.closed-purchase')
     {
-        $html = file_get_html($this->collectionFile);
+        $html = file_get_html($this->file);
         $ret = $html->find($successSelector); // .collection-header содержится на страницах, на которых есть коллекция
 
+        $items = array();
+
         if ( ! empty ($ret) ) {
-            $items = array();
 
             $rows = $html->find('.goods_list');
 
             foreach ($rows as $rowNum => $tr) {
+                /** @var $tr simple_html_dom_node */
 
                 $num = trim($tr->find('.num', 0)->innertext);
                 $items[$rowNum]['num'] = $num;
@@ -110,21 +100,21 @@ class Collection
         } else {
             $closed = $html->find($closedCollectionSelector);
             if ( ! empty ($closed) ) {
-                $this->collectionArray['errors'][] = 'К сожалению, товар недоступен для заказа';
+                $this->array['errors'][] = 'К сожалению, товар недоступен для заказа';
             } else {
-                $this->collectionArray['errors'][] = 'К сожалению, не удалось загрузить коллекцию';
+                $this->array['errors'][] = 'К сожалению, не удалось загрузить коллекцию';
             }
         }
 
         $html->clear();
         unset($html);
 
-        if ( empty ($this->collectionArray['errors']) ) {
-            $this->collectionArray['items'] = $items;
-            $this->collectionArray['collectionId'] = $this->collectionId;
+        if ( empty ($this->array['errors']) ) {
+            $this->array['items'] = $items;
+            $this->array['collectionId'] = $this->id;
         }
 
-        return $this->collectionArray;
+        return $this->array;
 
     }
 
